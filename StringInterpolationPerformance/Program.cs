@@ -2,18 +2,25 @@
 using BenchmarkDotNet.Running;
 using System;
 using System.Text;
+using BenchmarkDotNet.Reports;
 
-namespace StringInterpolationPerformanceB
+namespace StringInterpolationPerformance
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<StringFormatVsStringInterpolation>();
-            
+            Summary summary;
+
+            summary = BenchmarkRunner.Run<StringFormatVsStringInterpolation>();
+
+            summary = BenchmarkRunner.Run<StringPlusOperatorVsStringInterpolation>();
+
             summary = BenchmarkRunner.Run<StringConcatVsStringInterpolation>();
-            
+
             summary = BenchmarkRunner.Run<StringBuilderVsStringInterpolation>();
+
+            summary = BenchmarkRunner.Run<StringPlusOperatorVsStringConcat>();
         }
     }
 
@@ -38,12 +45,33 @@ namespace StringInterpolationPerformanceB
 
     }
 
-    public class StringConcatVsStringInterpolation
+    public class StringPlusOperatorVsStringInterpolation
     {
         private string data1;
         private string data2;
         private string data3;
         
+        public StringPlusOperatorVsStringInterpolation()
+        {
+            data1 = Guid.NewGuid().ToString();
+            data2 = Guid.NewGuid().ToString();
+            data3 = Guid.NewGuid().ToString();
+        }
+
+        [Benchmark]
+        public string StringPlusOperator() => "test format" + data1 + data2 + data3;
+
+        [Benchmark]
+        public string StringInterpolation() => ($"test format{data1}, {data2}, {data3}");
+
+    }
+
+    public class StringConcatVsStringInterpolation
+    {
+        private string data1;
+        private string data2;
+        private string data3;
+
         public StringConcatVsStringInterpolation()
         {
             data1 = Guid.NewGuid().ToString();
@@ -52,7 +80,7 @@ namespace StringInterpolationPerformanceB
         }
 
         [Benchmark]
-        public string StringConcat() => "test format" + data1 + data2 + data3;
+        public string StringConcat() => string.Concat("test format", data1, data2, data3);
 
         [Benchmark]
         public string StringInterpolation() => ($"test format{data1}, {data2}, {data3}");
@@ -80,4 +108,25 @@ namespace StringInterpolationPerformanceB
 
     }
 
+    public class StringPlusOperatorVsStringConcat
+    {
+        private string data1;
+        private string data2;
+        private string data3;
+        private string data4;
+
+        public StringPlusOperatorVsStringConcat()
+        {
+            data1 = Guid.NewGuid().ToString();
+            data2 = Guid.NewGuid().ToString();
+            data3 = Guid.NewGuid().ToString();
+            data4 = Guid.NewGuid().ToString();
+        }
+
+        [Benchmark]
+        public string StringPlusOperator() => "test format" + data1 + data2 + data3 + data4;
+
+        [Benchmark]
+        public string StringConcat() => string.Concat("test format", data1, data2, data3, data4);
+    }
 }
