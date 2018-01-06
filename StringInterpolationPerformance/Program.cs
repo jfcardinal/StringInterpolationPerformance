@@ -34,6 +34,12 @@ namespace StringInterpolationPerformance
             data3 = Guid.NewGuid().ToString();
         }
 
+        [Benchmark]
+        public string StringConcatX() => string.Concat("test format", data1, data2, data3);
+
+        [Benchmark]
+        public string StringPlusOperatorX() => "test format" + data1 + data2 + data3;
+
         [Benchmark(Baseline = true)]
         public string StringConcat() => string.Concat("test format", data1, ", ", data2, ", ", data3);
 
